@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " <graph_file>" << endl;
+        cerr << "Usage: " << argv[0] << " graph" << endl;
         return 1;
     }
     Graph G;
