@@ -15,47 +15,40 @@ void error(string word1, string word2, string msg) {
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
-    if (word1.size() > word2.size() + 1 || word2.size() > word1.size() + 1)
-        return false;
-    if (word1.size() == word2.size()) {
-        int diffCount = 0;
-        for (size_t i = 0; i < word1.size(); i++) {
-            if (word1[i] != word2[i]) {
-                diffCount++;
-                if (diffCount > 1) return false;
-            }
-        }
-        return (diffCount == 1);
-    } else {
-    const string* shorter;
-    const string* longer;
-    if (word1.size() < word2.size()) {
-        shorter = &word1;
-        longer = &word2;
-    } else {
-        shorter = &word2;
-        longer = &word1;
-    }
-    int i = 0, j = 0;
-    int diffCount = 0;
-    while (i < (int)shorter->size() && j < (int)longer->size()) {
-        if ((*shorter)[i] == (*longer)[j]) {
-            i++;
-            j++;
-        } else {
-            diffCount++;
-            if (diffCount > 1) return false;
-            j++;
-        }
-    }
-    if (j < (int)longer->size()) diffCount++;
-    return (diffCount == 1);
-    }
+    return edit_distance_within(word1, word2, 1);
 }
 
-// idk what the point of this func is
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
-    return false;
+    int ls = str1.size(), lt = str2.size();
+    if (ls > lt + d || lt > ls + d)
+        return false;
+    if (ls == lt) {
+        int diff = 0;
+        for (int i = 0; i < ls; i++) {
+            if (str1[i] != str2[i]) {
+                diff++;
+                if (diff > d) return false;
+            }
+        }
+        return true;
+    } else {
+        const string& shorter = (ls < lt ? str1 : str2);
+        const string& longer  = (ls < lt ? str2 : str1);
+        int i = 0, j = 0;
+        int diff = 0;
+        while (i < shorter.size() && j < longer.size()) {
+            if (shorter[i] == longer[j]) {
+                i++;
+                j++;
+            } else {
+                diff++;
+                if (diff > d) return false;
+                j++;
+            }
+        }
+        if (j < longer.size()) diff++;
+        return diff <= d;
+    }
 }
 
 void load_words(set<string>& word_list, const string& file_name) {
@@ -82,6 +75,8 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         paths.pop();
         string last_word = path.back();
         for (auto& d_word : word_list) {
+            if (d_word.size() > last_word.size() + 1 || last_word.size() > d_word.size() + 1)
+                continue;
             if (visited.find(d_word) == visited.end() &&
                 is_adjacent(last_word, d_word)) 
             {
