@@ -63,38 +63,31 @@ void load_words(set<string>& word_list, const string& file_name) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if (begin_word == end_word) 
-        return {};
-    if (word_list.find(end_word) == word_list.end()) 
-        return {};
-    unordered_map<int, vector<string>> buckets;
-    for (const string& w : word_list) {
-        buckets[w.size()].push_back(w);
+    if (begin_word == end_word) {
+        return vector<string>();
+    }
+    if (word_list.find(end_word) == word_list.end()) {
+        return vector<string>();
     }
     queue<vector<string>> paths;
     paths.push({begin_word});
-    unordered_set<string> visited;
+    set<string> visited;
     visited.insert(begin_word);
     while (!paths.empty()) {
         vector<string> path = paths.front();
         paths.pop();
         string last_word = path.back();
-        int L = last_word.size();
-        for (int len = L - 1; len <= L + 1; ++len) {
-            if (buckets.find(len) == buckets.end())
+        for (auto& d_word : word_list) {
+            if (d_word.size() > last_word.size() + 1 || last_word.size() > d_word.size() + 1)
                 continue;
-            for (const string& cand : buckets[len]) {
-                if (visited.find(cand) != visited.end())
-                    continue;
-                if (is_adjacent(last_word, cand)) {
-                    vector<string> newPath = path;
-                    newPath.push_back(cand);
-                    visited.insert(cand);
-                    if (cand == end_word) {
-                        return newPath;
-                    }
-                    paths.push(newPath);
+            if (visited.find(d_word) == visited.end() && is_adjacent(last_word, d_word)) {
+                vector<string> newPath = path;
+                newPath.push_back(d_word);
+                visited.insert(d_word);
+                if (d_word == end_word) {
+                    return newPath;
                 }
+                paths.push(newPath);
             }
         }
     }
