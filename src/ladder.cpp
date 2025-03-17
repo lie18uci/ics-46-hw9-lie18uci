@@ -63,8 +63,10 @@ void load_words(set<string>& word_list, const string& file_name) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if (begin_word == end_word) return {};
-    if (word_list.find(end_word) == word_list.end()) return {};
+    if (begin_word == end_word) 
+        return {};
+    if (word_list.find(end_word) == word_list.end()) 
+        return {};
     unordered_map<int, vector<string>> buckets;
     for (const string& w : word_list) {
         buckets[w.size()].push_back(w);
@@ -104,10 +106,14 @@ void print_word_ladder(const vector<string>& l) {
         cout << "No word ladder found." << endl;
         return;
     }
+    cout << "Word ladder found: ";
     for (size_t i = 0; i < l.size(); i++) {
         cout << l[i];
+        if (i + 1 < l.size()) {
+            cout << " ";
+        }
     }
-    cout << endl;
+    cout << "\n";
 }
 
 #define my_assert(e) {cout << #e << ((e) ? " passed": " failed") << endl;}
