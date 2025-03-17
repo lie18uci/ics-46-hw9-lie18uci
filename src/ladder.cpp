@@ -63,35 +63,32 @@ void load_words(set<string>& word_list, const string& file_name) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if (begin_word == end_word) {
+    if (begin_word == end_word)
         return vector<string>();
-    }
-    if (word_list.find(end_word) == word_list.end()) {
+    if (word_list.find(end_word) == word_list.end())
         return vector<string>();
-    }
-    queue<vector<string>> paths;
-    paths.push({begin_word});
+    queue<vector<string>> ladder_q;
+    ladder_q.push({begin_word});
     set<string> visited;
     visited.insert(begin_word);
-    while (!paths.empty()) {
-        vector<string> path = paths.front();
-        paths.pop();
-        string last_word = path.back();
-        for (auto& d_word : word_list) {
-            if (d_word.size() > last_word.size() + 1 || last_word.size() > d_word.size() + 1)
-                continue;
-            if (visited.find(d_word) == visited.end() && is_adjacent(last_word, d_word)) {
-                vector<string> newPath = path;
-                newPath.push_back(d_word);
-                visited.insert(d_word);
-                if (d_word == end_word) {
-                    return newPath;
+    while (!ladder_q.empty()) {
+        vector<string> ladder = ladder_q.front();
+        ladder_q.pop();
+        string last_word = ladder.back();
+        for (const string& word : word_list) {
+            if (is_adjacent(last_word, word)) {
+                if (visited.find(word) == visited.end()) {
+                    visited.insert(word);
+                    vector<string> new_ladder = ladder;
+                    new_ladder.push_back(word);
+                    if (word == end_word)
+                        return new_ladder;
+                    ladder_q.push(new_ladder);
                 }
-                paths.push(newPath);
             }
         }
     }
-    return {};
+    return vector<string>();
 }
 
 void print_word_ladder(const vector<string>& l) {
